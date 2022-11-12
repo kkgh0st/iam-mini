@@ -1,0 +1,9 @@
+student:
+  name: lihao
+  age: 23
+redis:
+  host: "127.0.0.1"
+  port: 6016
+  username: kk
+  password: 1234
+name: tt
