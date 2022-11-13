@@ -1,16 +1,22 @@
-package auth
+package server
 
 import (
 	jwt "github.com/appleboy/gin-jwt/v2"
 	"github.com/gin-gonic/gin"
 	"github.com/spf13/viper"
+	ds "iam-mini/apiserver/ds/v1"
 	"iam-mini/generic/middleware"
 	"iam-mini/generic/middleware/auth"
 	"net/http"
 	"time"
 )
 
-func NewJWTAuth() middleware.AuthStrategy {
+type loginInfo struct {
+	Username string `form:"username" json:"username" binding:"required"`
+	Password string `form:"password" json:"password" binding:"required"`
+}
+
+func newJWTAuth() middleware.AuthStrategy {
 
 	ginjwt, _ := jwt.New(&jwt.GinJWTMiddleware{
 		Realm:            viper.GetString("jwt.Realm"),
@@ -53,8 +59,45 @@ func payloadFunc() func(data interface{}) jwt.MapClaims {
 	return nil
 }
 
+func parseWithBody(c *gin.Context) (loginInfo, error) {
+	var login loginInfo
+	if err := c.ShouldBindJSON(&login); err != nil {
+		return loginInfo{}, jwt.ErrFailedAuthentication
+	}
+
+	return login, nil
+}
+
 func authenticator() func(c *gin.Context) (interface{}, error) {
-	return nil
+	return func(c *gin.Context) (interface{}, error) {
+		var login loginInfo
+		var err error
+		// 解析相关头认证
+		if c.Request.Header.Get("Authorization") != "" {
+			// 解析头
+		} else {
+			// 解析Body部分
+			login, err = parseWithBody(c)
+		}
+		if err != nil {
+			return "", jwt.ErrFailedAuthentication
+		}
+
+		/*
+			这里调用Secure
+		*/
+		if login.Password == "admin" && login.Username == "admin" {
+			// pass
+		} else {
+			return "", jwt.ErrFailedAuthentication
+		}
+
+		// 返回确切时间
+		return &ds.User{
+			Username:  login.Username,
+			Password:  login.Password,
+			LoginedAt: time.Now()}, nil
+	}
 }
 
 func loginResponse() func(c *gin.Context, code int, token string, expire time.Time) {

@@ -1,19 +1,19 @@
-package server
+package apiserver
 
 import (
 	"fmt"
 	"github.com/spf13/pflag"
 	"github.com/spf13/viper"
-	"iam-mini/apiserver"
+	"iam-mini/apiserver/server"
 	"os"
 )
 
-func readConfigFile() *Opts {
+func readConfigFile() *server.Opts {
 
-	viper.SetConfigFile(apiserver.ConfigFilePath)
+	viper.SetConfigFile(ConfigFilePath)
 	viper.SetConfigType("yaml")
 
-	opts := NewOpts()
+	opts := server.NewOpts()
 
 	fs := &pflag.FlagSet{}
 	opts.AddFlags(fs)
@@ -43,6 +43,6 @@ func readConfigFile() *Opts {
 	return opts
 }
 
-func DoConfig() *Opts {
+func DoConfig() *server.Opts {
 	return readConfigFile()
 }

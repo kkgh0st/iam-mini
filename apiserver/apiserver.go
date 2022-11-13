@@ -4,10 +4,10 @@ import (
 	"github.com/spf13/pflag"
 )
 
-var configFilePath string = ""
+var ConfigFilePath string = ""
 
 func init() {
-	pflag.StringVar(&configFilePath, "config", "", "the absolute path for api-server's config file")
+	pflag.StringVar(&ConfigFilePath, "config", "", "the absolute path for api-server's config file")
 }
 
 func Run() {

@@ -1,6 +1,6 @@
 package main
 
-import "kkgo-app/apiserver"
+import "iam-mini/apiserver"
 
 func main() {
 	apiserver.Run()

@@ -2,6 +2,7 @@ package apiserver
 
 import (
 	"github.com/spf13/cobra"
+	"iam-mini/apiserver/server"
 )
 
 func cmdRun() cmdRunFunc {
@@ -14,7 +15,16 @@ func cmdRun() cmdRunFunc {
 func run() {
 
 	// 下面来完成这些工作，这本身一点也不难
-	doConfig()
-	// apiServer := createServer(cfgs)
-	// apiServer.run()
+	config := DoConfig()
+	serverConfig := server.NewConfig()
+	config.ApplyTo(serverConfig)
+	apiServer, err := server.CreateAPIServer(serverConfig)
+	if err != nil {
+		return
+	}
+
+	err = apiServer.PrepareRun().Run()
+	if err != nil {
+		return
+	}
 }
