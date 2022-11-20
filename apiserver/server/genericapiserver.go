@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"golang.org/x/sync/errgroup"
+	"iam-mini/generic/middleware"
 	"iam-mini/generic/opt"
 	"net/http"
 )
@@ -43,7 +44,12 @@ func (c *CompletedConfig) New() (*GenericAPIServer, error) {
 }
 
 func initGenericApiServer(s *GenericAPIServer) {
+
 	// 来初始化各个通用的中间组件，无需多言
+	s.Setup()
+	s.InstallMiddlewares()
+	s.InstallAPIs()
+
 }
 
 type GenericAPIServer struct {
@@ -57,8 +63,21 @@ type GenericAPIServer struct {
 	insecureServer, secureServer *http.Server
 }
 
+func (s *GenericAPIServer) Setup() {
+	// 这里只是显示日志
+}
+
+func (s *GenericAPIServer) InstallMiddlewares() {
+	// necessary
+	s.Use(middleware.RequestID())
+
+	// custom
+
+}
+
 func (s *GenericAPIServer) InstallAPIs() {
 	// 这来负责安装全部API
+
 }
 
 func (s *GenericAPIServer) Run() error {

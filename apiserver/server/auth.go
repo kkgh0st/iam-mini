@@ -72,7 +72,7 @@ func authenticator() func(c *gin.Context) (interface{}, error) {
 	return func(c *gin.Context) (interface{}, error) {
 		var login loginInfo
 		var err error
-		// 解析相关头认证
+		// 这里直接解析相关头部
 		if c.Request.Header.Get("Authorization") != "" {
 			// 解析头
 		} else {
@@ -103,6 +103,12 @@ func authenticator() func(c *gin.Context) (interface{}, error) {
 func loginResponse() func(c *gin.Context, code int, token string, expire time.Time) {
 	return nil
 }
+
+func newAutoAuth() middleware.AuthStrategy {
+	// newBasicAuth().(auth.BasicStrategy)，Basic这个策略我们暂时先不支持
+	return auth.NewAutoStrategy(nil, newJWTAuth().(auth.JWTStrategy))
+}
+
 func refreshResponse() func(c *gin.Context, code int, token string, expire time.Time) {
 	return nil
 }
