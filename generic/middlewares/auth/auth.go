@@ -2,7 +2,7 @@ package auth
 
 import (
 	"github.com/gin-gonic/gin"
-	"iam-mini/generic/middleware"
+	"iam-mini/generic/middlewares"
 	"net/http"
 	"strings"
 )
@@ -10,13 +10,13 @@ import (
 const authHeadCount = 2
 
 type AutoStrategy struct {
-	basic middleware.AuthStrategy
-	jwt   middleware.AuthStrategy
+	basic middlewares.AuthStrategy
+	jwt   middlewares.AuthStrategy
 }
 
-var _ middleware.AuthStrategy = &AutoStrategy{}
+var _ middlewares.AuthStrategy = &AutoStrategy{}
 
-func NewAutoStrategy(basic, jwt middleware.AuthStrategy) AutoStrategy {
+func NewAutoStrategy(basic, jwt middlewares.AuthStrategy) AutoStrategy {
 	return AutoStrategy{
 		basic: basic,
 		jwt:   jwt,
@@ -25,7 +25,7 @@ func NewAutoStrategy(basic, jwt middleware.AuthStrategy) AutoStrategy {
 
 func (a AutoStrategy) AuthFunc() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		operator := middleware.AuthOperator{}
+		operator := middlewares.AuthOperator{}
 		authHeader := strings.SplitN(c.Request.Header.Get("Authorization"), " ", 2)
 
 		if len(authHeader) != authHeadCount {

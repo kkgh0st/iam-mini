@@ -15,10 +15,14 @@ func cmdRun() cmdRunFunc {
 func run() {
 
 	// 下面来完成这些工作，这本身一点也不难
-	config := DoConfig()
+	opts := DoConfig()
 	serverConfig := server.NewConfig()
-	config.ApplyTo(serverConfig)
-	apiServer, err := server.CreateAPIServer(serverConfig)
+	opts.ApplyTo(serverConfig)
+	config, err := CreateConfigFromOptions(opts)
+	if err != nil {
+		return
+	}
+	apiServer, err := CreateAPIServer(config)
 	if err != nil {
 		return
 	}

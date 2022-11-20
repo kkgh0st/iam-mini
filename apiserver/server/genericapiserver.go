@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"golang.org/x/sync/errgroup"
-	"iam-mini/generic/middleware"
-	"iam-mini/generic/opt"
+	"iam-mini/generic/middlewares"
+	"iam-mini/generic/options"
 	"net/http"
 )
 
@@ -69,7 +69,7 @@ func (s *GenericAPIServer) Setup() {
 
 func (s *GenericAPIServer) InstallMiddlewares() {
 	// necessary
-	s.Use(middleware.RequestID())
+	s.Use(middlewares.RequestID())
 
 	// custom
 

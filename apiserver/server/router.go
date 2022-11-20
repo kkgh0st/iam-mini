@@ -3,11 +3,12 @@ package server
 import (
 	"github.com/gin-gonic/gin"
 	"iam-mini/apiserver/controller/v1/secret"
-	"iam-mini/generic/middleware"
-	"iam-mini/generic/middleware/auth"
+	"iam-mini/apiserver/store/mysql"
+	"iam-mini/generic/middlewares"
+	"iam-mini/generic/middlewares/auth"
 )
 
-func initRouter(g *gin.Engine) {
+func InitRouter(g *gin.Engine) {
 	installMiddleware(g)
 	installController(g)
 
@@ -15,10 +16,6 @@ func initRouter(g *gin.Engine) {
 
 func installMiddleware(g *gin.Engine) {
 
-}
-
-// 虚假的Store实例，之后会换成mysql
-type DummyStore struct {
 }
 
 func installController(g *gin.Engine) {
@@ -31,11 +28,14 @@ func installController(g *gin.Engine) {
 	auto := newAutoAuth()
 
 	// version_1
-	storeIns := DummyStore{}
+	storeIns, err := mysql.GetMySQLFactoryOr(nil)
+	if err != nil {
+		return
+	}
 	v1 := g.Group("/v1")
 	{
 		v1.Use(auto.AuthFunc())
-		secretv1 := v1.Group("/secrets", middleware.Publish())
+		secretv1 := v1.Group("/secrets", middlewares.Publish())
 		{
 
 			secretController := secret.NewSecretController(storeIns)

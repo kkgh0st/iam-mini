@@ -3,7 +3,7 @@ package auth
 import (
 	ginjwt "github.com/appleboy/gin-jwt/v2"
 	"github.com/gin-gonic/gin"
-	"iam-mini/generic/middleware"
+	"iam-mini/generic/middlewares"
 )
 
 // AuthzAudience defines the value of jwt audience field.
@@ -15,7 +15,7 @@ type JWTStrategy struct {
 	ginjwt.GinJWTMiddleware
 }
 
-var _ middleware.AuthStrategy = &JWTStrategy{}
+var _ middlewares.AuthStrategy = &JWTStrategy{}
 
 // NewJWTStrategy create jwt bearer strategy with GinJWTMiddleware.
 func NewJWTStrategy(gjwt ginjwt.GinJWTMiddleware) JWTStrategy {

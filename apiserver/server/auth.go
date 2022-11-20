@@ -4,9 +4,9 @@ import (
 	jwt "github.com/appleboy/gin-jwt/v2"
 	"github.com/gin-gonic/gin"
 	"github.com/spf13/viper"
-	ds "iam-mini/apiserver/ds/v1"
-	"iam-mini/generic/middleware"
-	"iam-mini/generic/middleware/auth"
+	ds "iam-mini/apiserver/datadef/v1"
+	"iam-mini/generic/middlewares"
+	"iam-mini/generic/middlewares/auth"
 	"net/http"
 	"time"
 )
@@ -16,7 +16,7 @@ type loginInfo struct {
 	Password string `form:"password" json:"password" binding:"required"`
 }
 
-func newJWTAuth() middleware.AuthStrategy {
+func newJWTAuth() middlewares.AuthStrategy {
 
 	ginjwt, _ := jwt.New(&jwt.GinJWTMiddleware{
 		Realm:            viper.GetString("jwt.Realm"),
@@ -104,7 +104,7 @@ func loginResponse() func(c *gin.Context, code int, token string, expire time.Ti
 	return nil
 }
 
-func newAutoAuth() middleware.AuthStrategy {
+func newAutoAuth() middlewares.AuthStrategy {
 	// newBasicAuth().(auth.BasicStrategy)，Basic这个策略我们暂时先不支持
 	return auth.NewAutoStrategy(nil, newJWTAuth().(auth.JWTStrategy))
 }
