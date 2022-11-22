@@ -17,6 +17,14 @@ func (ds *datastore) Secrets() store.SecretStore {
 	return newSecrets(ds)
 }
 
+func (ds *datastore) Users() store.UserStore {
+	return newUsers(ds)
+}
+
+func (ds *datastore) Policies() store.PolicyStore {
+	return newPolicies(ds)
+}
+
 var (
 	mysqlFactory store.Factory
 	once         sync.Once

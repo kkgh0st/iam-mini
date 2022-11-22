@@ -3,8 +3,11 @@ package server
 import (
 	jwt "github.com/appleboy/gin-jwt/v2"
 	"github.com/gin-gonic/gin"
+	metav1 "github.com/marmotedu/component-base/pkg/meta/v1"
 	"github.com/spf13/viper"
-	ds "iam-mini/apiserver/datadef/v1"
+	"iam-mini/apiserver/store"
+	// ds "iam-mini/apiserver/datadef/v1"
+
 	"iam-mini/generic/middlewares"
 	"iam-mini/generic/middlewares/auth"
 	"net/http"
@@ -82,21 +85,26 @@ func authenticator() func(c *gin.Context) (interface{}, error) {
 		if err != nil {
 			return "", jwt.ErrFailedAuthentication
 		}
-
-		/*
-			这里调用Secure
-		*/
-		if login.Password == "admin" && login.Username == "admin" {
-			// pass
-		} else {
+		if err != nil {
 			return "", jwt.ErrFailedAuthentication
 		}
 
-		// 返回确切时间
-		return &ds.User{
-			Username:  login.Username,
-			Password:  login.Password,
-			LoginedAt: time.Now()}, nil
+		// Get the user information by the login username.
+		user, err := store.Client().Users().Get(c, login.Username, metav1.GetOptions{})
+		if err != nil {
+
+			return "", jwt.ErrFailedAuthentication
+		}
+
+		// Compare the login password with the user password.
+		if err := user.Compare(login.Password); err != nil {
+			return "", jwt.ErrFailedAuthentication
+		}
+
+		user.LoginedAt = time.Now()
+		_ = store.Client().Users().Update(c, user, metav1.UpdateOptions{})
+
+		return user, nil
 	}
 }
 

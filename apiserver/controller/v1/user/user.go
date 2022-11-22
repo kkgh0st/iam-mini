@@ -1,16 +1,16 @@
-package secret
+package user
 
 import (
 	srvv1 "iam-mini/apiserver/service/v1"
 	"iam-mini/apiserver/store"
 )
 
-type SecretController struct {
+type UserController struct {
 	srv srvv1.Service
 }
 
-func NewSecretController(store store.Factory) *SecretController {
-	return &SecretController{
+func NewUserController(store store.Factory) *UserController {
+	return &UserController{
 		srv: srvv1.NewService(store),
 	}
 }

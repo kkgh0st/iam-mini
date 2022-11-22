@@ -17,6 +17,7 @@ const maxSecretCount = 10
 func (s *SecretController) Create(c *gin.Context) {
 	var r v1.Secret
 
+	// 来获取这个数据结构
 	if err := c.ShouldBindJSON(&r); err != nil {
 		core.WriteResponse(c, errors.WithCode(code.ErrBind, err.Error()), nil)
 
@@ -29,6 +30,7 @@ func (s *SecretController) Create(c *gin.Context) {
 		return
 	}
 
+	// 获取username，
 	username := c.GetString(middlewares.UsernameKey)
 
 	secrets, err := s.srv.Secrets().List(c, username, metav1.ListOptions{
