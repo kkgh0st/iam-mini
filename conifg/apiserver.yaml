@@ -1,11 +1,12 @@
 redis:
-  host: "127.0.0.1"
-  port: 6016
-  username: kk
-  password: 1234
+  host: "127.0.0.1"# redis 地址，默认 127.0.0.1:6379
+  port: "6379" # redis 端口，默认 6379
+  password: "" # redis 密码
+
 insecure:
   bind-address: 0.0.0.0
   bind-port: 8080
+
 jwt:
   realm: JWT # jwt 标识
   key: dfVpOK8LZeJLZHYmHdb1VdyRrACKpqoo # 服务端密钥

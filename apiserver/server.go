@@ -2,6 +2,7 @@ package apiserver
 
 import (
 	"iam-mini/apiserver/server"
+	"iam-mini/apiserver/store"
 	"iam-mini/apiserver/store/mysql"
 	genericoptions "iam-mini/generic/options"
 )
@@ -9,6 +10,8 @@ import (
 type apiServer struct {
 	genericAPIServer *server.GenericAPIServer
 	gRPCAPIServer    *server.GrpcAPIServer
+	// 这个只是在这里设置配置，之后会调用
+	redisOptions *genericoptions.RedisOpt
 }
 
 type ExtraConfig struct {
@@ -51,9 +54,9 @@ func (c *completedExtraConfig) New() (*server.GrpcAPIServer, error) {
 	//opts := []grpc.ServerOption{grpc.MaxRecvMsgSize(c.MaxMsgSize), grpc.Creds(creds)}
 	//grpcServer := grpc.NewServer(opts...)
 
-	_, _ = mysql.GetMySQLFactoryOr(c.mysqlOptions)
-	// storeIns, _ := etcd.GetEtcdFactoryOr(c.etcdOptions, nil)
-	//store.SetClient(storeIns)
+	storeIns, _ := mysql.GetMySQLFactoryOr(c.mysqlOptions)
+	//storeIns, _ := etcd.GetEtcdFactoryOr(c.etcdOptions, nil)
+	store.SetClient(storeIns)
 	//cacheIns, err := cachev1.GetCacheInsOr(storeIns)
 	//if err != nil {
 	//	log.Fatalf("Failed to get cache instance: %s", err.Error())
@@ -119,6 +122,7 @@ func CreateAPIServer(cfg *Config) (*apiServer, error) {
 	return &apiServer{
 		genericAPIServer: genericServer,
 		gRPCAPIServer:    extraServer,
+		redisOptions:     cfg.RedisOpt,
 	}, nil
 }
 
@@ -130,7 +134,13 @@ func (s *preparedAPIServer) Run() error {
 	return s.genericAPIServer.Run()
 }
 
+func (s *apiServer) initRedisStore() {
+
+}
+
 func (s *apiServer) PrepareRun() *preparedAPIServer {
 	server.InitRouter(s.genericAPIServer.Engine)
+
+	s.initRedisStore()
 	return &preparedAPIServer{s}
 }

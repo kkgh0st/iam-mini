@@ -2,6 +2,7 @@ package server
 
 import (
 	"github.com/gin-gonic/gin"
+	"iam-mini/apiserver/controller/v1/policy"
 	"iam-mini/apiserver/controller/v1/secret"
 	"iam-mini/apiserver/controller/v1/user"
 	"iam-mini/apiserver/store/mysql"
@@ -59,6 +60,19 @@ func installController(g *gin.Engine) {
 			secretv1.PUT(":name", secretController.Update)
 			secretv1.GET(":name", secretController.Get)
 			secretv1.GET("", secretController.List)
+		}
+
+		// 开启polciy
+		policyv1 := v1.Group("/policies", middlewares.Publish())
+		{
+			policyController := policy.NewPolicyController(storeIns)
+
+			policyv1.POST("", policyController.Create)
+			policyv1.DELETE("", policyController.DeleteCollection)
+			policyv1.DELETE(":name", policyController.Delete)
+			policyv1.PUT(":name", policyController.Delete)
+			policyv1.GET("", policyController.List)
+			policyv1.GET(":name", policyController.Get)
 		}
 
 	}
